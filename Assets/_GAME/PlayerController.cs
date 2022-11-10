@@ -64,7 +64,9 @@ public class PlayerController : MonoBehaviour
 
     #endregion
 
-    // Start is called before the first frame update
+    /// <summary>
+    /// Awake is called when the script instance is being loaded.
+    /// </summary>
     void Awake()
     {
         _rb = gameObject.GetComponent<Rigidbody>();
@@ -73,7 +75,9 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false;
     }
 
-    // Update is called once per frame
+    /// <summary>
+    /// Update is called once per Physics update
+    /// </summary>
     private void FixedUpdate()
     {
         _isGrounded = Physics.CheckSphere(Vector3.Lerp(-transform.up + ((transform.forward * 3.15f) + transform.position), transform.position, 0.84f), 0.08f) || Physics.CheckSphere(Vector3.Lerp(-transform.up + ((-transform.forward * 2.7f) + transform.position), transform.position, 0.84f), 0.08f);
@@ -84,30 +88,34 @@ public class PlayerController : MonoBehaviour
         else
             AirControls();
 
-        if (isTouchingAnything && Input.GetKeyDown(KeyCode.R))
-            transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
+        //if (isTouchingAnything && Input.GetKeyDown(KeyCode.R))
+        //    transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
 
-        //if (_returnPhase >= 0)
-        //{
-        //    transform.Rotate(0, 0, (Time.deltaTime / _flipDuration) * 180);
+        if (_returnPhase >= 0)
+        {
+            transform.Rotate(0, 0, (Time.deltaTime / _flipDuration) * 180);
 
-        //    _returnPhase += Time.deltaTime;
+            _returnPhase += Time.deltaTime;
 
-        //    if (_returnPhase >= _flipDuration)
-        //        _returnPhase = -1;
-        //}
+            if (_returnPhase >= _flipDuration)
+                _returnPhase = -1;
+        }
     }
+
+    /// <summary>
+    /// Update is called every frame
+    /// </summary>
     private void Update()
     {
-        //bool isTouchingAnything = Physics.CheckBox(new Vector3(transform.position.x, transform.position.y - 0.075f, transform.position.z), new Vector3(0.45f, 0.35f, 1.8f) / 2, transform.rotation, ~LayerMask.NameToLayer("Ground"));
+        bool isTouchingAnything = Physics.CheckBox(new Vector3(transform.position.x, transform.position.y - 0.075f, transform.position.z), new Vector3(0.45f, 0.35f, 1.8f) / 2, transform.rotation, ~LayerMask.NameToLayer("Ground"));
 
-        //if (isTouchingAnything && Input.GetKeyDown(KeyCode.R) && _returnPhase == -1)
-        //{
-        //    _rb.AddForce(0, 100, 0);
-        //    _returnPhase = 0;
-        //}
-        //Debug.DrawRay(transform.position, _rb.angularVelocity, Color.white);
-        //Debug.DrawRay(transform.position, _rb.angularVelocity - (transform.right * transform.InverseTransformDirection(_rb.angularVelocity).x), Color.red);
+        if (isTouchingAnything && Input.GetKeyDown(KeyCode.R) && _returnPhase == -1)
+        {
+            _rb.AddForce(0, 100, 0);
+            _returnPhase = 0;
+        }
+        Debug.DrawRay(transform.position, _rb.angularVelocity, Color.white);
+        Debug.DrawRay(transform.position, _rb.angularVelocity - (transform.right * transform.InverseTransformDirection(_rb.angularVelocity).x), Color.red);
     }
 
     private void SkateFrixion()
@@ -150,7 +158,7 @@ public class PlayerController : MonoBehaviour
         {
             if (_timer >= 0.08f)
             {
-                _rb.AddRelativeTorque(-6, 0, 0);
+                _rb.AddRelativeTorque(-10, 0, 0);
             }
             else
             {
@@ -211,7 +219,7 @@ public class PlayerController : MonoBehaviour
         {
             if (_timer2 >= 0.08f)
             {
-                _rb.AddRelativeTorque(6, 0, 0);
+                _rb.AddRelativeTorque(10, 0, 0);
             }
             else
             {

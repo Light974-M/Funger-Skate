@@ -14,22 +14,39 @@ namespace UPDB.CamerasAndCharacterControllers.Cameras.TpsCamera
         [SerializeField, Tooltip("speed of mouse look in X and Y")]
         private Vector2 _lookSpeed = Vector2.one;
 
-        [SerializeField]
+        [SerializeField, Tooltip("target to follow")]
         private Transform _target;
 
-        [SerializeField]
+        [SerializeField, Tooltip("speed of translation between front view and back view in automatic mode")]
         private float _translationSpeed = 20;
 
+        /// <summary>
+        /// var that contain mouse input value
+        /// </summary>
         private Vector2 _rotation = Vector2.zero;
 
+        /// <summary>
+        /// save last input pressed between front and back
+        /// </summary>
         private bool _lastInput = false;
 
+        /// <summary>
+        /// represent real time, used for translations between front and back view in auto mode
+        /// </summary>
         private float _timer = 0f;
 
+        /// <summary>
+        /// save last camera pos locally to skate, used in air, when camera is fixed(auto mode)
+        /// </summary>
         private Vector3 _memoTagretSkatePos;
 
+        /// <summary>
+        /// determine if camra controls are manual or automatic
+        /// </summary>
         private bool _isCameraManual = true;
 
+
+        #region Public API
 
         public Vector2 LookSpeed
         {
@@ -43,33 +60,53 @@ namespace UPDB.CamerasAndCharacterControllers.Cameras.TpsCamera
             set { _cameraPivot = value; }
         }
 
+        #endregion
+
+        /// <summary>
+        /// Awake is called when the script instance is being loaded.
+        /// </summary>
         private void Awake()
         {
             InitVariables();
         }
 
+        /// <summary>
+        /// Update is called every frame
+        /// </summary>
         private void Update()
         {
             Look();
         }
 
+        /// <summary>
+        /// called at awake, initialize variables
+        /// </summary>
         public void InitVariables()
         {
+            //if there is no gameObject parent of camera, set this variable to itself
             if (_cameraPivot == null)
                 _cameraPivot = transform;
         }
 
+        /// <summary>
+        /// called every frame, set camera position
+        /// </summary>
         private void Look()
         {
+            //call manual or automatic function, depending on state of bool var
             if (_isCameraManual)
                 MouseControl();
             else
                 CameraAuto();
 
+            //if camera switch input is pressed, switch camera mode
             if (Input.GetKeyDown(KeyCode.C))
                 _isCameraManual = !_isCameraManual;
         }
 
+        /// <summary>
+        /// set camera with mouse input
+        /// </summary>
         private void MouseControl()
         {
             Vector2 mouse = new Vector2(Input.GetAxis("Mouse X") * _lookSpeed.x, Input.GetAxis("Mouse Y") * _lookSpeed.y);
@@ -80,6 +117,9 @@ namespace UPDB.CamerasAndCharacterControllers.Cameras.TpsCamera
             _cameraPivot.eulerAngles = new Vector3(_rotation.x, _rotation.y, 0.0f);
         }
 
+        /// <summary>
+        /// set camera following automatic mode
+        /// </summary>
         private void CameraAuto()
         {
             Transform player = GameObject.FindWithTag("Player").transform;
